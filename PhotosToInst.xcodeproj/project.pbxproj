@@ -81,13 +81,13 @@
 		985E16251A03309D00CD5A25 /* PhotosToInst */ = {
 			isa = PBXGroup;
 			children = (
+				985E16351A03309D00CD5A25 /* LaunchScreen.xib */,
+				985E16301A03309D00CD5A25 /* Main.storyboard */,
 				985E162A1A03309D00CD5A25 /* AppDelegate.h */,
 				985E162B1A03309D00CD5A25 /* AppDelegate.m */,
 				985E162D1A03309D00CD5A25 /* ViewController.h */,
 				985E162E1A03309D00CD5A25 /* ViewController.m */,
-				985E16301A03309D00CD5A25 /* Main.storyboard */,
 				985E16331A03309D00CD5A25 /* Images.xcassets */,
-				985E16351A03309D00CD5A25 /* LaunchScreen.xib */,
 				985E16261A03309D00CD5A25 /* Supporting Files */,
 			);
 			path = PhotosToInst;
@@ -346,6 +346,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PhotosToInst/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -356,6 +357,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = PhotosToInst/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

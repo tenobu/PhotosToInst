@@ -10,6 +10,8 @@
 
 @interface ViewController ()
 
+@property (weak, nonatomic) IBOutlet UIImageView *imageView;
+
 @end
 
 @implementation ViewController
@@ -22,6 +24,19 @@
 - (void)didReceiveMemoryWarning {
 	[super didReceiveMemoryWarning];
 	// Dispose of any resources that can be recreated.
+}
+
+- (IBAction)button_Camera_Action:(id)sender
+{
+
+}
+
+- (IBAction)button_CameraRoll_Action:(id)sender
+{
+
+	UIImage *image = self.imageView.image;
+	
+	NSString *savePath = [NSHomeDirectory() stringByAppendingPathComponent: 
 }
 
 @end
