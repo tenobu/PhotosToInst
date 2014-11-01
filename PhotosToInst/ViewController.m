@@ -18,22 +18,30 @@
 
 @implementation ViewController
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
+
 	[super viewDidLoad];
+	
 	// Do any additional setup after loading the view, typically from a nib.
+
 }
 
-- (void)didReceiveMemoryWarning {
+- (void)didReceiveMemoryWarning
+{
+
 	[super didReceiveMemoryWarning];
+	
 	// Dispose of any resources that can be recreated.
+
 }
 
-- (IBAction)button_Camera_Action:(id)sender
+- (IBAction)button_Camera_Action: (id)sender
 {
 
 	UIImagePickerController *picker = [[UIImagePickerController alloc] init];
 	
-	[picker setDelegate: self];
+	picker.delegate = self;
 	
 	picker.sourceType    = UIImagePickerControllerSourceTypeCamera;
 	picker.allowsEditing = YES;
@@ -42,12 +50,12 @@
 	
 }
 
-- (IBAction)button_CameraRoll_Action:(id)sender
+- (IBAction)button_CameraRoll_Action: (id)sender
 {
 
 	UIImagePickerController *picker = [[UIImagePickerController alloc] init];
 	
-	[picker setDelegate: self];
+	picker.delegate = self;
 	
 	picker.sourceType    = UIImagePickerControllerSourceTypePhotoLibrary;
 	picker.allowsEditing = YES;
@@ -56,42 +64,117 @@
 
 }
 
+- (void)imagePickerController: (UIImagePickerController *)picker
+didFinishPickingMediaWithInfo: (NSDictionary *)info
+{
+	
+	UIImage *chImage = info [UIImagePickerControllerOriginalImage];
+	
+	CGImageRef cgRef = chImage.CGImage;
+	
+	chImage = [[UIImage alloc] initWithCGImage: cgRef
+										 scale: 1.0
+								   orientation: UIImageOrientationUp];
+	
+	[self.imageView setImage: chImage];
+
+	[picker dismissViewControllerAnimated: YES completion: nil];
+	
+	[self performSelector: @selector( shareInstagram ) withObject: self afterDelay: 1.0f];
+	
+}
+
+- (void)imagePickerControllerDidCancel: (UIImagePickerController *)picker
+{
+	
+	[picker dismissViewControllerAnimated: YES completion: nil];
+	
+}
+
 - (void)shareInstagram
 {
 	
 	UIImage *image = self.imageView.image;
 	
-	NSString *savePath = [NSHomeDirectory() stringByAppendingPathComponent: @"Documents/Test.ig"];
+	NSURL *instagramURL = [NSURL URLWithString: @"instagram://app"];
 	
-	[UIImagePNGRepresentation(image) writeToFile: savePath atomically: YES];
-	
-	CGRect rect = CGRectMake( 0, 0, 0, 0 );
-	NSString *jpgPath = [NSHomeDirectory() stringByAppendingPathComponent: @"Documents/Test.ig"];
-	NSURL *igImageHookFile = [[NSURL alloc] initWithString: [NSString stringWithFormat: @"file://%@", jpgPath]];
-							  
-	self.dic.UTI = @"com.instagran.photo";
-	self.dic = [self setupControllerWithURL: igImageHookFile usingDelegate: self];
-	self.dic = [UIDocumentInteractionController interactionControllerWithURL: igImageHookFile];
-	
-	[self.dic presentOpenInMenuFromRect: rect inView: self.view animated: YES];
-	
-	NSURL *instagramURL = [NSURL URLWithString: @"instagram://media?id=MEDIA_ID"];
-	
-	if ( [[UIApplication sharedApplication] canOpenURL: instagramURL] ) {
+	if ( ! [[UIApplication sharedApplication] canOpenURL: instagramURL] ) {
 		
-		[self.dic presentOpenInMenuFromRect: rect inView:<#(UIView *)#>self.View animated: YES];
+		NSLog( @"Instagramがインストールされていない" );
 		
-	} else {
-		
-		NSLog( @"No Instagram Found" );
-		
+		return;
+	
 	}
+	
+	NSString *filePath = [NSHomeDirectory() stringByAppendingPathComponent: @"Documents/image.igo"];
+	
+	NSURL *fileURL = [NSURL fileURLWithPath: filePath];
+	
+	[UIImagePNGRepresentation(image) writeToFile: filePath atomically: YES];
+	
+//	CGRect rect = CGRectMake( 0, 0, 0, 0 );
+//	NSString *jpgPath = [NSHomeDirectory() stringByAppendingPathComponent: @"Documents/image.ig"];
+//	NSURL *igImageHookFile = [[NSURL alloc] initWithString: [NSString stringWithFormat: @"file://%@", jpgPath]];
+
+	self.dic = [UIDocumentInteractionController interactionControllerWithURL: fileURL];
+	
+	self.dic.annotation = [NSDictionary dictionaryWithObject: @"#私のマックブックプロ #IntelCore7"
+													  forKey: @"InstagramCaption"];
+	
+	self.dic.delegate = self;
+	
+	BOOL present = [self.dic presentOpenInMenuFromRect: self.view.frame
+												inView: self.view
+											  animated: YES];
+
+	if ( ! present ) {
+	
+		NSLog(@"このファイルを開けるアプリが存在しない。");
+	
+	}
+
+	
+	
+//	NSString *savePath = [NSHomeDirectory() stringByAppendingPathComponent: @"Documents/Test.ig"];
+//	
+//	[UIImagePNGRepresentation(image) writeToFile: savePath atomically: YES];
+//	
+//	CGRect rect = CGRectMake( 0, 0, 0, 0 );
+//	NSString *jpgPath = [NSHomeDirectory() stringByAppendingPathComponent: @"Documents/Test.ig"];
+//	NSURL *igImageHookFile = [[NSURL alloc] initWithString: [NSString stringWithFormat: @"file://%@", jpgPath]];
+//							  
+//	self.dic.UTI = @"com.instagran.photo";
+//	self.dic = [self setupControllerWithURL: igImageHookFile usingDelegate: self];
+//	self.dic = [UIDocumentInteractionController interactionControllerWithURL: igImageHookFile];
+//	
+//	[self.dic presentOpenInMenuFromRect: rect inView: self.view animated: YES];
+//	
+////	NSURL *instagramURL = [NSURL URLWithString: @"instagram://media?id=MEDIA_ID&tag?name=#徳島城"];
+////	NSURL *instagramURL = [NSURL URLWithString: @"instagram://media?id=MEDIA_ID"];
+//	NSURL *instagramURL = [NSURL URLWithString: @"instagram://tag?name=AAAA"];
+//
+//	if ( [[UIApplication sharedApplication] canOpenURL: instagramURL] ) {
+//		
+//		[[UIApplication sharedApplication] openURL: instagramURL];
+//		
+//		[self.dic presentOpenInMenuFromRect: rect inView: self.view animated: YES];
+//		
+//	} else {
+//		
+//		NSLog( @"No Instagram Found" );
+//		
+//	}
 	
 }
 
-- (UIDocumentInteractionController *)setupControllerWithURL: (NSURL *)fileURL usingDelegate: (id < UIDocumentInteractionControllerDelegate >)
+- (UIDocumentInteractionController *)setupControllerWithURL: (NSURL *)fileURL usingDelegate: (id < UIDocumentInteractionControllerDelegate >)interactionDelegate
 {
 
+	UIDocumentInteractionController *interactionController = [UIDocumentInteractionController interactionControllerWithURL: fileURL];
+	
+	interactionController.delegate = interactionDelegate;
+	
+	return interactionController;
 	
 }
 
